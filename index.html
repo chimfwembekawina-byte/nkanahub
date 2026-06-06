@@ -2,995 +2,1249 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Nkana Hub - Computational Toolbox</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-  <meta name="theme-color" content="#1e2530">
-  <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Computational Toolbox - Stoichiometry Calculator</title>
   <style>
-    :root {
-      --bg-main: #f4f6f9;
-      --header-bg: #1e2530;
-      --header-text: #fff;
-      --accent: #0066cc;
-      --card-bg: #fff;
-      --border-card: #e1e8ed;
-      --input-border: #b8c2cf;
-      --input-focus: #0066cc;
-      --shadow-card: 0 2px 10px 0 rgba(30,32,39,0.06);
-      --radii: 1.2rem;
-      --shadow-header: 0 4px 18px 0 rgba(50,60,80,0.09);
-      --shadow-drop: drop-shadow(0 2px 8px #1111ff09);
-      --font-main: "Inter", "Segoe UI", Arial, sans-serif;
-      --font-size-title: 1.21rem;
-      --font-size-h2: 1.09rem;
-      --font-size-btn: 1.04rem;
-      --font-size-small: 0.96rem;
-      --bigpad: 13px;
-      --smallpad: 7px;
-    }
-    body {
+    * {
       margin: 0;
-      background: var(--bg-main);
-      font-family: var(--font-main);
-      -webkit-font-smoothing: antialiased;
-      color: #26334d;
-      touch-action: manipulation;
-      overscroll-behavior-y: none;
-      min-height: 100vh;
-    }
-    #app-root {
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      max-width: 520px;
-      margin: 0 auto;
-      background: var(--bg-main);
-      overflow-x: hidden;
-    }
-
-    /* Top Nav + Swipe Tabs */
-    .top-nav {
-      width: 100vw; max-width: 520px;
-      background: var(--header-bg);
-      color: var(--header-text);
-      font-size: 1.19rem;
-      font-weight: 700;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      position: sticky;
-      top: 0;
-      z-index: 99;
-      box-shadow: var(--shadow-header);
-      letter-spacing: 0.03em;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .app-title {
-      text-align: center;
-      padding: 17px 5px 10px 5px;
-      letter-spacing:0.06em;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #f0fcff;
-      background: var(--header-bg);
-    }
-    .main-tabs {
-      display: flex;
-      background: var(--header-bg);
-      gap: 0;
-      border-bottom: 2.5px solid #0d1527;
-      width: 100%;
-      max-width: 100vw;
-      /* swipe enabled (see JS for touch) */
-    }
-    .main-tab-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      color: var(--header-text);
-      font-size: 1.06rem;
-      font-family: inherit;
-      font-weight: 500;
-      padding: 12px 0 13px 0;
-      cursor: pointer;
-      transition: background 0.12s, color 0.12s;
-      border-bottom: 2.5px solid transparent;
-      outline: none;
-    }
-    .main-tab-btn.active {
-      color: var(--accent);
-      background: #f4f6f931;
-      border-bottom: 3.2px solid var(--accent);
-      font-weight: 700;
-    }
-    /* Workspace Tabs */
-    .workspace-tabs {
-      display: flex;
-      background: #eef2f6;
-      margin: 0;
-      width: 100vw;
-      max-width: 100vw;
-      border-bottom: 2.5px solid #e1e8ed;
-      user-select: none;
-    }
-    .ws-tab-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      color: #315;
-      font-size: 1.01rem;
-      padding: 12px 0 12px 0;
-      border-bottom: 3.1px solid transparent;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.127s, border 0.14s;
-      outline: none;
-    }
-    .ws-tab-btn.active {
-      color: var(--accent);
-      background: #ecf5fd;
-      border-bottom: 3.1px solid var(--accent);
-      font-weight: 700;
+      box-sizing: border-box;
     }
 
-    /* Card-area & Forms */
-    .card-area {
-      width: 100vw; max-width: 520px;
-      padding: var(--bigpad) 4vw;
-      display: flex; flex-direction: column; gap: 17px;
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1a2332;
+      --bg-tertiary: #252d3d;
+      --border-color: #3a4552;
+      --text-primary: #e8ecf1;
+      --text-secondary: #a3aab3;
+      --accent-primary: #00d4ff;
+      --accent-secondary: #00ff88;
+      --accent-warning: #ff6b6b;
+      --accent-success: #00ff88;
+      --card-bg: #141b27;
+      --glow-blue: rgba(0, 212, 255, 0.15);
+      --glow-green: rgba(0, 255, 136, 0.15);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    @media (min-width: 460px) {
-      .card-area { padding-left:calc((100vw - 440px)/2); padding-right:calc((100vw - 440px)/2);}
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow: hidden;
     }
+
+    #app-container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: 60px 1fr;
+      height: 100vh;
+      width: 100%;
+    }
+
+    /* ============ HEADER ============ */
+    .header {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #0f172a 0%, #1a2332 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-status {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .status-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ============ SIDEBAR ============ */
+    .sidebar {
+      grid-row: 2;
+      grid-column: 1;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      padding: 24px 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      padding: 12px 20px;
+      letter-spacing: 1px;
+      margin-top: 16px;
+    }
+
+    .sidebar-section-title:first-child {
+      margin-top: 0;
+    }
+
+    .nav-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 3px solid transparent;
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-item:hover {
+      background: rgba(0, 212, 255, 0.1);
+      border-left-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .nav-item.active {
+      background: rgba(0, 212, 255, 0.15);
+      border-left-color: var(--accent-primary);
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    /* ============ MAIN CONTENT ============ */
+    .main-content {
+      grid-row: 2;
+      grid-column: 2;
+      overflow-y: auto;
+      padding: 32px;
+      background: var(--bg-primary);
+    }
+
+    /* ============ CARD COMPONENT ============ */
     .card {
       background: var(--card-bg);
-      border: 1.5px solid var(--border-card);
-      border-radius: var(--radii);
-      box-shadow: var(--shadow-card);
-      padding: 1.08em 1.14em 1.16em 1.13em;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 13px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
+
+    .card:hover {
+      border-color: var(--accent-primary);
+      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.1);
+    }
+
     .card-title {
-      font-size: var(--font-size-title);
-      font-weight: 650;
-      color: #1a253a;
-      margin-bottom: 3px;
-    }
-    h2 {
-      font-size: var(--font-size-h2);
-      font-weight: 600;
-      color: #0066cc;
-      margin: 11px 0 10px 0;
-      letter-spacing: .02em;
-    }
-    label {
-      color: #153046;
-      font-size: 1.04rem;
-      font-weight: 600;
-      margin-bottom: 3px;
-      margin-top: 10px;
-      letter-spacing: 0.005em;
-    }
-    .input-row, .input-pair {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-primary);
       display: flex;
-      flex-direction: column;
-      gap: 0;
-      width: 100%;
+      align-items: center;
+      gap: 10px;
     }
-    .input-pair input {
-      margin-bottom: 10px;
+
+    .card-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--glow-blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-primary);
+      font-size: 14px;
     }
-    input, select, textarea {
-      width: 100%;
-      max-width: 100%;
-      font-size: 1.21em;
-      padding: 13px 13px;
-      border: 1.6px solid var(--input-border);
-      border-radius: 0.82em;
-      background: #fcfcfc;
-      color: #203045;
-      outline: none;
-      margin-bottom: 9.5px;
-      transition: border 0.14s, box-shadow .13s;
-      box-sizing: border-box;
-      font-family: inherit;
+
+    /* ============ FORM ELEMENTS ============ */
+    .form-group {
+      margin-bottom: 20px;
     }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px #0066cc2a;
-    }
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0;}
-    .primary-btn, .accent-btn {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 0.81em;
-      font-size: var(--font-size-btn);
-      font-weight: 700;
-      padding: .7em 1.1em;
-      cursor: pointer;
-      margin-top: 7px;
+
+    .form-group:last-child {
       margin-bottom: 0;
-      box-shadow: 0 2px 9px #0066cc18;
-      transition: background .15s, box-shadow .12s;
-      outline: none;
     }
-    .primary-btn:active { background: #0052a3;}
-    .small-btn {
-      font-size: var(--font-size-small);
-      padding: .45em 1em;
-      background: #eff2f8;
-      color: var(--accent);
-      border-radius: 7px;
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      background: rgba(0, 212, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    }
+
+    .form-select {
+      cursor: pointer;
+      appearance: none;
+      padding-right: 40px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a3aab3' d='M2.5 4.5l3.5 3 3.5-3'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+
+    .unit-label {
+      position: absolute;
+      right: 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    /* ============ BUTTON STYLES ============ */
+    .btn {
+      padding: 12px 24px;
       border: none;
-      margin-left: 4px;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-    }
-    .result-block {
-      background: #f6f8fb;
-      border: 1.5px solid #dee3ef;
-      border-radius: .98em;
-      margin-top: 11px;
-      padding: 12px 1em 11px 1em;
-      color: #223033;
-      font-size: 1.14em;
-      word-break: break-word;
-      white-space: pre-line;
-      box-shadow: 0 1px 9px 0 #0066cc15;
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
-    .accordion {
-      margin-top: 13px;
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), #0099cc);
+      color: #000;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
     }
-    .accordion-summary {
-      background: #eef2fd;
-      color: var(--accent);
-      padding: 11px 14px;
-      border-radius: 11px;
-      font-weight: 700;
-      font-size: 1.04em;
-      display: flex; align-items: center; justify-content: space-between;
-      border: none;
-      width: 100%;
-      cursor: pointer;
-      transition: background .10s;
-      outline: none;
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 212, 255, 0.4);
     }
-    .accordion-summary:active, .accordion-summary[open] {background: #e3efff;}
-    .accordion-details {
-      background: #fff;
-      border-radius: 0 0 12px 12px;
-      padding: 11px 14px 8px 17px;
-      font-size: .99em;
-      color: #234;
-      border-top: 1.3px solid #e1e8ed;
-      margin-top: -5px;
+
+    .btn-primary:active {
+      transform: translateY(0);
     }
-    .matrix-grid {
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-color);
+      border-color: var(--accent-primary);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--accent-success), #00cc66);
+      color: #000;
+    }
+
+    .btn-success:hover {
+      box-shadow: 0 6px 25px rgba(0, 255, 136, 0.3);
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    /* ============ GRID LAYOUT ============ */
+    .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 13px;
-      width: 100%;
-      max-width: 240px;
-      margin: 17px auto 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
     }
-    .matrix-grid input {
+
+    /* ============ RESULTS SECTION ============ */
+    .results-container {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .result-group {
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-primary);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .result-group.success {
+      border-left-color: var(--accent-success);
+      background: rgba(0, 255, 136, 0.05);
+    }
+
+    .result-group.warning {
+      border-left-color: var(--accent-warning);
+      background: rgba(255, 107, 107, 0.05);
+    }
+
+    .result-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .result-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-primary);
+      font-family: 'Courier New', monospace;
+    }
+
+    .result-group.success .result-value {
+      color: var(--accent-success);
+    }
+
+    .result-group.warning .result-value {
+      color: var(--accent-warning);
+    }
+
+    .result-unit {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-left: 8px;
+    }
+
+    /* ============ EQUATION DISPLAY ============ */
+    .equation-display {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      color: var(--accent-primary);
       text-align: center;
-      font-size: 1.3em;
-      padding: 12px;
-      margin-bottom: 0;
+      word-break: break-word;
     }
-    /* Simultaneous toggles */
-    .simul-toggle {
-      display: flex; gap: 9px; margin-bottom: 8px; margin-top: 6px;
+
+    .equation-display.invalid {
+      color: var(--accent-warning);
+      border-color: var(--accent-warning);
     }
-    .simul-toggle label {font-weight: 500; font-size: 1.01em;}
-    .simul-system {
-      display: flex; gap: 2vw; margin-top: 4px;
-      flex-direction: column;
-      width: 100%;
+
+    /* ============ TABS ============ */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
     }
-    @media (min-width: 380px) {
-      .simul-system { flex-direction: row; }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: var(--transition);
     }
-    .simul-equ {
-      flex: 1 1 0;
-      display: flex; flex-direction: column;
+
+    .tab-btn:hover {
+      color: var(--accent-primary);
     }
-    .simul-equ input {
-      margin-bottom: 10px;
+
+    .tab-btn.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
     }
-    .footer {
-      width: 100vw; max-width: 520px;
-      margin: 0 auto;
-      text-align: center;
-      font-size: .99rem;
-      color: #33395c7c;
-      padding: 19px 0 25px 0;
+
+    .tab-content {
+      display: none;
     }
-    /* Hide scrollbars on mobile */
-    ::-webkit-scrollbar { width: 0px; background: transparent; }
-    html,body,#app-root {scrollbar-width:none;}
-    /* Responsive tweaks */
-    @media (max-width: 440px) {
-      .card-area,.footer { padding-left:2vw; padding-right:2vw;}
-      .card { padding: 0.74em 0.77em 0.83em 0.75em;}
-      input, select, textarea { font-size: 1rem; padding: 11px;}
-      .matrix-grid input { font-size: 1.13em; padding: 11px;}
-      .accordion-details { font-size: .92em;}
-      .result-block { font-size: 1em;}
+
+    .tab-content.active {
+      display: block;
     }
-    @media (pointer:coarse) {
-      input, button, select, .accordion-summary { touch-action: manipulation;}
+
+    /* ============ SUBSTANCE ROW ============ */
+    .substance-row {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .substance-row-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      grid-column: 1 / -1;
+      margin-bottom: 8px;
+    }
+
+    .substance-result {
+      padding: 10px 12px;
+      background: rgba(0, 212, 255, 0.1);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--accent-primary);
+    }
+
+    .substance-result.product {
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--accent-success);
+    }
+
+    .substance-result.excess {
+      background: rgba(255, 107, 107, 0.1);
+      color: var(--accent-warning);
+    }
+
+    /* ============ SCROLLBAR ============ */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-primary);
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1024px) {
+      #app-container {
+        grid-template-columns: 200px 1fr;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .substance-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #app-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        grid-row: 2;
+        grid-column: 1;
+        max-height: 200px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0;
+      }
+
+      .sidebar-section-title {
+        display: none;
+      }
+
+      .nav-item {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: 12px 16px;
+      }
+
+      .nav-item.active {
+        border-left: none;
+        border-bottom-color: var(--accent-primary);
+      }
+
+      .main-content {
+        grid-row: 3;
+        grid-column: 1;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .substance-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============ LOADING STATE ============ */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent-primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ============ TOOLTIP ============ */
+    .tooltip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--glow-blue);
+      color: var(--accent-primary);
+      font-size: 12px;
+      cursor: help;
+      position: relative;
+    }
+
+    .tooltip-icon:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+    }
+
+    /* ============ ALERT ============ */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border-left: 4px solid;
+      font-size: 14px;
+    }
+
+    .alert.error {
+      background: rgba(255, 107, 107, 0.1);
+      border-left-color: var(--accent-warning);
+      color: var(--accent-warning);
+    }
+
+    .alert.success {
+      background: rgba(0, 255, 136, 0.1);
+      border-left-color: var(--accent-success);
+      color: var(--accent-success);
+    }
+
+    .alert.info {
+      background: rgba(0, 212, 255, 0.1);
+      border-left-color: var(--accent-primary);
+      color: var(--accent-primary);
     }
   </style>
 </head>
 <body>
-<div id="app-root">
-  <!-- TopBar & Tabs -->
-  <nav class="top-nav" id="top-nav">
-    <div class="app-title">Nkana Hub - Computational Toolbox</div>
-    <div class="main-tabs" id="main-tabs">
-      <button class="main-tab-btn active" id="tab-chem-btn">Chemistry</button>
-      <button class="main-tab-btn" id="tab-phys-btn">Physics</button>
-      <button class="main-tab-btn" id="tab-math-btn">Mathematics</button>
-    </div>
-  </nav>
-  <!-- Chemistry Tools -->
-  <div id="chemistry-screen" style="display:block;">
-    <div class="workspace-tabs" id="chem-ws-tabs">
-      <button class="ws-tab-btn active" id="chem-eq-btn">Eq. Balancer</button>
-      <button class="ws-tab-btn" id="chem-mole-btn">Mole Solver</button>
-      <button class="ws-tab-btn" id="chem-limit-btn">Limiting Reactant</button>
-    </div>
-    <div class="card-area">
-      <!-- Eq Balancer -->
-      <section class="card" id="chem-eq-workspace">
-        <div class="card-title">Equation Balancer</div>
-        <form id="chem-eq-form" autocomplete="off">
-          <label for="eq-input">Unbalanced equation:</label>
-          <input id="eq-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="E.g. Zn + HCl = ZnCl2 + H2" required>
-        </form>
-        <div class="result-block" id="eq-result"></div>
-      </section>
-      <!-- Mole & Quantity Solver -->
-      <section class="card" id="chem-mole-workspace" style="display:none;">
-        <div class="card-title">Mole &amp; Quantity Solver</div>
-        <form id="mole-form" autocomplete="off">
-          <label>Known Compound</label>
-          <input type="text" id="known-name" placeholder="Name (e.g. HCl)">
-          <label>Coefficient</label>
-          <input type="number" id="known-coeff" min="1" value="1">
-          <label>Molar Mass (g/mol)</label>
-          <input type="number" id="known-mass" step="any" min="0">
-          <label>Given Value</label>
-          <select id="known-metric">
-            <option value="g">Mass (g)</option>
-            <option value="mol">Moles (mol)</option>
-            <option value="v_stp">Volume at STP (dm³)</option>
-            <option value="v_rtp">Volume at RTP (dm³)</option>
-          </select>
-          <input type="number" id="known-qty" step="any" min="0">
-          <label>Target Compound</label>
-          <input type="text" id="target-name">
-          <label>Coefficient</label>
-          <input type="number" id="target-coeff" min="1" value="1">
-          <label>Molar Mass (g/mol)</label>
-          <input type="number" id="target-mass" step="any" min="0">
-          <label>Desired Output Unit</label>
-          <select id="target-unit">
-            <option value="g">Mass (g)</option>
-            <option value="mol">Moles (mol)</option>
-            <option value="v_stp">Volume at STP (dm³)</option>
-            <option value="v_rtp">Volume at RTP (dm³)</option>
-          </select>
-          <button type="submit" class="primary-btn">Solve</button>
-        </form>
-        <details class="accordion" id="ptable-accordion">
-          <summary class="accordion-summary">Periodic Table Mass Reference ▼</summary>
-          <div class="accordion-details" style="font-family:monospace;">
-Li 6.94 | Be 9.01 | Na 22.99 | Mg 24.31 | K 39.10 | Ca 40.08 | Rb 85.47 | Sr 87.62 | Cs 132.9 | Ba 137.3
-<br>
-C 12.01 | N 14.01 | O 16.00 | F 19.00 | P 30.97 | S 32.07 | Cl 35.45 | Br 79.90 | I 126.90
-<br>
-Fe 55.85 | Cu 63.55 | Zn 65.38 | Ag 107.87 | Au 196.97 | Pb 207.20 | Hg 200.59
-          </div>
-        </details>
-        <div class="result-block" id="mole-result"></div>
-      </section>
-      <!-- Limiting Reactant -->
-      <section class="card" id="chem-limit-workspace" style="display:none;">
-        <div class="card-title">Limiting Reactant Solver</div>
-        <form id="limit-form" autocomplete="off">
-          <label>Reactant A Name</label>
-          <input type="text" id="lim-a-name">
-          <label>Available Moles (mol)</label>
-          <input type="number" id="lim-a-mol" min="0" step="any">
-          <label>Coefficient in Eqn.</label>
-          <input type="number" id="lim-a-coeff" min="1" value="1">
-          <label>Molar Mass (g/mol)</label>
-          <input type="number" id="lim-a-mass" min="0" step="any"><br>
-          <label>Reactant B Name</label>
-          <input type="text" id="lim-b-name">
-          <label>Available Moles (mol)</label>
-          <input type="number" id="lim-b-mol" min="0" step="any">
-          <label>Coefficient in Eqn.</label>
-          <input type="number" id="lim-b-coeff" min="1" value="1">
-          <label>Molar Mass (g/mol)</label>
-          <input type="number" id="lim-b-mass" min="0" step="any">
-          <button type="submit" class="primary-btn">Calculate Limiting/Excess</button>
-        </form>
-        <div class="result-block" id="limiting-result"></div>
-      </section>
+<div id="app-container">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title">🧪 Computational Toolbox</div>
+    <div class="header-status">
+      <div class="status-indicator"></div>
+      <div class="status-text">Ready</div>
     </div>
   </div>
-  <!-- Physics Tools -->
-  <div id="physics-screen" style="display:none;">
-    <div class="workspace-tabs" id="phys-ws-tabs">
-      <button class="ws-tab-btn active" id="phys-kine-btn">Kinematics</button>
-      <button class="ws-tab-btn" id="phys-wave-btn">Wave Eqn</button>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section-title">Tools</div>
+    <div class="nav-item active" data-module="stoichiometry">
+      <span class="nav-icon">⚗️</span>
+      <span>Stoichiometry</span>
     </div>
-    <div class="card-area">
-      <section class="card" id="phys-kine-workspace">
-        <div class="card-title">Kinematics Solver</div>
-        <form id="kinematics-form" autocomplete="off">
-          <label>Known Quantities (leave 2 blank)</label>
-          <div class="input-row">
-            <input id="kin-u" type="number" step="any" placeholder="u: Initial velocity (m/s)">
-            <input id="kin-v" type="number" step="any" placeholder="v: Final velocity (m/s)">
-            <input id="kin-a" type="number" step="any" placeholder="a: Acceleration (m/s²)">
-            <input id="kin-t" type="number" step="any" placeholder="t: Time (s)">
-            <input id="kin-s" type="number" step="any" placeholder="s: Displacement (m)">
-          </div>
-          <button type="submit" class="primary-btn">Solve Kinematics</button>
-        </form>
-        <div class="result-block" id="kinematics-result"></div>
-      </section>
-      <section class="card" id="phys-wave-workspace" style="display:none;">
-        <div class="card-title">Wave Equation Solver</div>
-        <form id="waves-form" autocomplete="off">
-          <label for="wv-v">Known (Leave 1 blank):</label>
-          <input id="wv-v" type="number" step="any" placeholder="v: Wave Speed (m/s)">
-          <input id="wv-f" type="number" step="any" placeholder="f: Frequency (Hz)">
-          <input id="wv-l" type="number" step="any" placeholder="λ: Wavelength (m)">
-          <button type="submit" class="primary-btn">Solve</button>
-        </form>
-        <div class="result-block" id="waves-result"></div>
-      </section>
+    <div class="nav-item" data-module="physics">
+      <span class="nav-icon">⚛️</span>
+      <span>Physics</span>
+    </div>
+    <div class="nav-item" data-module="calculus">
+      <span class="nav-icon">∫</span>
+      <span>Calculus</span>
     </div>
   </div>
-  <!-- Math Tools -->
-  <div id="math-screen" style="display:none;">
-    <div class="workspace-tabs" id="math-ws-tabs">
-      <button class="ws-tab-btn active" id="math-quad-btn">Quadratic</button>
-      <button class="ws-tab-btn" id="math-mat-btn">2x2 Matrix</button>
-      <button class="ws-tab-btn" id="math-simul-btn">Simultaneous</button>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <!-- STOICHIOMETRY MODULE -->
+    <div id="stoichiometry-module" class="module-content active">
+      <!-- EQUATION BALANCER CARD -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-icon">⚖️</div>
+          Chemical Equation Balancer
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Unbalanced Equation</label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              class="form-input" 
+              id="unbalanced-equation"
+              placeholder="e.g., Cu + HNO3 -> Cu(NO3)2 + NO2 + H2O"
+              autocomplete="off"
+            >
+          </div>
+          <small style="color: var(--text-secondary); display: block; margin-top: 6px;">
+            Use → or -> to separate reactants from products. Supports nested parentheses.
+          </small>
+        </div>
+
+        <div id="equation-result" class="equation-display" style="display: none;"></div>
+        <div id="equation-error" class="alert error" style="display: none;"></div>
+      </div>
+
+      <!-- STOICHIOMETRY CALCULATOR CARD -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-icon">📊</div>
+          Stoichiometry Calculator
+        </div>
+
+        <div class="alert info">
+          Balance an equation above, then use this calculator to determine theoretical yields and limiting reactants.
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Balanced Equation (Auto-filled)</label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              class="form-input" 
+              id="balanced-equation-display"
+              disabled
+              style="background: var(--bg-tertiary); cursor: not-allowed;"
+            >
+          </div>
+        </div>
+
+        <div id="reactants-section"></div>
+        <div id="products-section"></div>
+
+        <button class="btn btn-primary" id="calculate-stoichiometry" style="width: 100%; justify-content: center; margin-top: 24px;">
+          Calculate Theoretical Yield
+        </button>
+
+        <div id="stoichiometry-results" class="results-container" style="display: none;"></div>
+      </div>
     </div>
-    <div class="card-area">
-      <section class="card" id="math-quad-workspace">
-        <div class="card-title">Quadratic Equation</div>
-        <form id="quad-form" autocomplete="off">
-          <label>ax² + bx + c = 0</label>
-          <input type="number" id="quad-a" step="any" placeholder="a">
-          <input type="number" id="quad-b" step="any" placeholder="b">
-          <input type="number" id="quad-c" step="any" placeholder="c">
-          <button type="submit" class="primary-btn">Solve</button>
-        </form>
-        <div class="result-block" id="quad-result"></div>
-      </section>
-      <section class="card" id="math-mat-workspace" style="display:none;">
-        <div class="card-title">2x2 Matrix Solver</div>
-        <form id="matrix-form" autocomplete="off">
-          <div class="matrix-grid">
-            <input id="m11" type="number" step="any" placeholder="a">
-            <input id="m12" type="number" step="any" placeholder="b">
-            <input id="m21" type="number" step="any" placeholder="c">
-            <input id="m22" type="number" step="any" placeholder="d">
-          </div>
-          <button type="submit" class="primary-btn">Solve Matrix</button>
-        </form>
-        <div class="result-block" id="matrix-result"></div>
-      </section>
-      <section class="card" id="math-simul-workspace" style="display:none;">
-        <div class="card-title">Simultaneous Solver</div>
-        <form id="simul-form" autocomplete="off">
-          <div class="simul-toggle">
-            <label><input type="radio" name="simul-vars" value="2" checked>2 vars</label>
-            <label><input type="radio" name="simul-vars" value="3">3 vars</label>
-          </div>
-          <div id="simul-2vars">
-            <div class="simul-system">
-              <div class="simul-equ">
-                <label>a₁x + b₁y = c₁</label>
-                <input type="number" id="s2a1" step="any" placeholder="a₁">
-                <input type="number" id="s2b1" step="any" placeholder="b₁">
-                <input type="number" id="s2c1" step="any" placeholder="c₁">
-              </div>
-              <div class="simul-equ">
-                <label>a₂x + b₂y = c₂</label>
-                <input type="number" id="s2a2" step="any" placeholder="a₂">
-                <input type="number" id="s2b2" step="any" placeholder="b₂">
-                <input type="number" id="s2c2" step="any" placeholder="c₂">
-              </div>
-            </div>
-          </div>
-          <div id="simul-3vars" style="display:none;">
-            <div class="simul-system">
-              <div class="simul-equ">
-                <label>a₁x + b₁y + c₁z = d₁</label>
-                <input type="number" id="s3a1" step="any" placeholder="a₁">
-                <input type="number" id="s3b1" step="any" placeholder="b₁">
-                <input type="number" id="s3c1" step="any" placeholder="c₁">
-                <input type="number" id="s3d1" step="any" placeholder="d₁">
-              </div>
-              <div class="simul-equ">
-                <label>a₂x + b₂y + c₂z = d₂</label>
-                <input type="number" id="s3a2" step="any" placeholder="a₂">
-                <input type="number" id="s3b2" step="any" placeholder="b₂">
-                <input type="number" id="s3c2" step="any" placeholder="c₂">
-                <input type="number" id="s3d2" step="any" placeholder="d₂">
-              </div>
-              <div class="simul-equ">
-                <label>a₃x + b₃y + c₃z = d₃</label>
-                <input type="number" id="s3a3" step="any" placeholder="a₃">
-                <input type="number" id="s3b3" step="any" placeholder="b₃">
-                <input type="number" id="s3c3" step="any" placeholder="c₃">
-                <input type="number" id="s3d3" step="any" placeholder="d₃">
-              </div>
-            </div>
-          </div>
-          <button type="submit" class="primary-btn">Solve System</button>
-        </form>
-        <div class="result-block" id="simul-result"></div>
-      </section>
+
+    <!-- PHYSICS MODULE (Placeholder) -->
+    <div id="physics-module" class="module-content">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-icon">⚛️</div>
+          Physics Calculator
+        </div>
+        <p style="color: var(--text-secondary);">Physics tools coming soon...</p>
+      </div>
+    </div>
+
+    <!-- CALCULUS MODULE (Placeholder) -->
+    <div id="calculus-module" class="module-content">
+      <div class="card">
+        <div class="card-title">
+          <div class="card-icon">∫</div>
+          Calculus Solver
+        </div>
+        <p style="color: var(--text-secondary);">Calculus tools coming soon...</p>
+      </div>
     </div>
   </div>
-  <footer class="footer">Nkana Hub &copy; 2026 &ndash; Computational Toolbox for ECZ</footer>
 </div>
+
 <script>
-  // ---------- Main Tabs Logic: Mobile swipe & Tap -----------
-  const mainTabs = [
-    {btn: "tab-chem-btn", screen:"chemistry-screen"},
-    {btn: "tab-phys-btn", screen:"physics-screen"},
-    {btn: "tab-math-btn", screen:"math-screen"},
-  ];
-  function switchMainTab(tabIndex) {
-    mainTabs.forEach((t,i) => {
-      document.getElementById(t.btn).classList.toggle('active', i===tabIndex);
-      document.getElementById(t.screen).style.display = i===tabIndex ? "block":"none";
-    });
-    window.scrollTo(0,0);
-  }
-  mainTabs.forEach((t,i) => {
-    document.getElementById(t.btn).onclick = () => switchMainTab(i);
-  });
+  // ============ PERIODIC TABLE DATA ============
+  const PERIODIC_TABLE = {
+    'H': 1.008, 'C': 12.011, 'N': 14.007, 'O': 15.999,
+    'F': 18.998, 'P': 30.974, 'S': 32.06, 'Cl': 35.45,
+    'Br': 79.904, 'I': 126.90, 'K': 39.098, 'Ca': 40.078,
+    'Fe': 55.845, 'Cu': 63.546, 'Zn': 65.38, 'Ag': 107.87,
+    'Na': 22.990, 'Mg': 24.305, 'Al': 26.982, 'Si': 28.086,
+    'Mn': 54.938, 'Co': 58.933, 'Ni': 58.693, 'Li': 6.941,
+    'Be': 9.012, 'B': 10.811, 'Ne': 20.180, 'Ar': 39.948,
+    'Cr': 51.996, 'Pb': 207.20, 'Hg': 200.59, 'Au': 196.97
+  };
 
-  // Touch/Swipe main tabs
-  (function(){
-    let startX = 0, curTab = 0;
-    const mtabs = document.getElementById('main-tabs');
-    mtabs.addEventListener('touchstart', e => {
-      if (e.touches.length !== 1) return;
-      startX = e.touches[0].clientX;
-    });
-    mtabs.addEventListener('touchend', e => {
-      if (e.changedTouches.length !== 1) return;
-      let dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) > 60) {
-        curTab = mainTabs.findIndex(t=>document.getElementById(t.btn).classList.contains('active'));
-        let next = dx < 0 ? Math.min(curTab + 1, mainTabs.length - 1) : Math.max(curTab - 1, 0);
-        if (next !== curTab) switchMainTab(next);
-      }
-    });
-  })();
-
-  // -------------- Chemistry Workspace Tabs --------------
-  const chemTabs = [
-    {btn: "chem-eq-btn", ws:"chem-eq-workspace"},
-    {btn: "chem-mole-btn", ws:"chem-mole-workspace"},
-    {btn: "chem-limit-btn", ws:"chem-limit-workspace"}
-  ];
-  function switchChemTab(i) {
-    chemTabs.forEach((t,j)=>{
-      document.getElementById(t.btn).classList.toggle('active', j===i);
-      document.getElementById(t.ws).style.display = j===i ? "block":"none";
-    });
-  }
-  chemTabs.forEach((t,i)=>{
-    document.getElementById(t.btn).onclick = ()=>switchChemTab(i);
-  });
-
-  // -------------- Physics Workspace Tabs --------------
-  const physTabs = [
-    {btn:"phys-kine-btn", ws:"phys-kine-workspace"},
-    {btn:"phys-wave-btn", ws:"phys-wave-workspace"}
-  ];
-  function switchPhysTab(i){
-    physTabs.forEach((t,j)=>{
-      document.getElementById(t.btn).classList.toggle('active', j===i);
-      document.getElementById(t.ws).style.display = j===i ? "block":"none";
-    });
-  }
-  physTabs.forEach((t,i)=>{document.getElementById(t.btn).onclick=()=>switchPhysTab(i)});
-
-  // -------------- Math Workspace Tabs --------------
-  const mathTabs = [
-    {btn:"math-quad-btn", ws:"math-quad-workspace"},
-    {btn:"math-mat-btn", ws:"math-mat-workspace"},
-    {btn:"math-simul-btn", ws:"math-simul-workspace"}
-  ];
-  function switchMathTab(i){
-    mathTabs.forEach((t,j)=>{
-      document.getElementById(t.btn).classList.toggle('active', j===i);
-      document.getElementById(t.ws).style.display = j===i?"block":"none";
-    });
-  }
-  mathTabs.forEach((t,i)=>{document.getElementById(t.btn).onclick=()=>switchMathTab(i)});
-
-  // ============ Chemistry: Equation Balancer (Basic) ============
-  // Basic algebraic system for highschool equations
-  function parseFormula(formula) {
-    let count = {}, regex = /([A-Z][a-z]*)(\d*)/g, m;
-    while((m=regex.exec(formula))!==null){
-      let el=m[1],n=m[2]?parseInt(m[2]):1;
-      count[el]=(count[el]||0)+n;
-    }
-    return count;
-  }
-  function atomsIn(compounds) {
-    let set = new Set();
-    compounds.forEach(mol=>{
-      let found = mol.match(/([A-Z][a-z]*)/g)||[];
-      for(let a of found) set.add(a);
-    });
-    return Array.from(set);
-  }
-  function balanceEquation(raw) {
-    if (!raw) return "";
-    try {
-      let eq = raw.replace(/→|->|⇌|<=>/g,"=").replace(/=/g, " = ");
-      let sides = eq.split("=").map(s=>s.split("+").map(t=>t.trim()).filter(Boolean));
-      if(sides.length!==2) throw "Use '=' or '->'";
-      let left = sides[0], right = sides[1], comps=[...left,...right];
-      let atoms=atomsIn(comps);
-      let n=atoms.length, m=comps.length;
-      // Matrix A
-      let A = [];
-      for(let i=0;i<n;++i){
-        let row=[];
-        for(let j=0;j<m;++j){
-          let mol=comps[j];
-          let total=0,re=/([A-Z][a-z]*)(\d*)/g,match;
-          while((match=re.exec(mol))!==null){
-            if(match[1]===atoms[i]) total += match[2]?parseInt(match[2]):1;
+  // ============ FORMULA PARSER ============
+  class FormulaParser {
+    static parse(formula) {
+      const atomCount = {};
+      const processFormula = (str, multiplier = 1) => {
+        let i = 0;
+        while (i < str.length) {
+          if (str[i] === '(') {
+            let depth = 1;
+            let j = i + 1;
+            while (j < str.length && depth > 0) {
+              if (str[j] === '(') depth++;
+              if (str[j] === ')') depth--;
+              j++;
+            }
+            let innerFormula = str.substring(i + 1, j - 1);
+            let k = j;
+            while (k < str.length && /\d/.test(str[k])) k++;
+            let subMultiplier = k > j ? parseInt(str.substring(j, k)) : 1;
+            processFormula(innerFormula, multiplier * subMultiplier);
+            i = k;
+          } else if (/[A-Z]/.test(str[i])) {
+            let element = str[i];
+            i++;
+            while (i < str.length && /[a-z]/.test(str[i])) {
+              element += str[i];
+              i++;
+            }
+            let j = i;
+            while (j < str.length && /\d/.test(str[j])) j++;
+            let count = j > i ? parseInt(str.substring(i, j)) : 1;
+            atomCount[element] = (atomCount[element] || 0) + count * multiplier;
+            i = j;
+          } else {
+            i++;
           }
-          row.push(j<left.length?total:-total);
         }
-        A.push(row);
+      };
+      processFormula(formula);
+      return atomCount;
+    }
+
+    static getMolarMass(formula) {
+      const atoms = this.parse(formula);
+      let mass = 0;
+      for (const [element, count] of Object.entries(atoms)) {
+        if (!PERIODIC_TABLE[element]) {
+          throw new Error(`Unknown element: ${element}`);
+        }
+        mass += PERIODIC_TABLE[element] * count;
       }
-      // Crout-Gauss Brute force
-      let result=null;
-      for(let scale=1;scale<=12;++scale){
-        let coeffs=Array(m-1).fill(0);coeffs.push(scale);
-        let found=true;
-        for(let i=n-1;i>=0;--i){
-          let sum=0;
-          for(let j=0;j<m-1;++j) sum += A[i][j]*coeffs[j];
-          let leftv = -A[i][m-1]*scale;
-          // independent rows only
-          if(A[i].slice(0,m-1).every(x=>x===0)&&A[i][m-1]===0)continue;
-          if(A[i].slice(0,m-1).some(x=>x!==0)){
-            let first=A[i].findIndex(x=>x!==0);
-            if(coeffs[first]===0 && A[i][first]!==0){
-              let val=(leftv-sum+A[i][first]*coeffs[first])/A[i][first];
-              if(!Number.isInteger(val)||val<0||(""+val).includes('e')){found=false;break;}
-              coeffs[first]=val;
+      return mass;
+    }
+
+    static getAtomicComposition(formula) {
+      return this.parse(formula);
+    }
+  }
+
+  // ============ EQUATION BALANCER ============
+  class EquationBalancer {
+    static parseEquation(eqStr) {
+      const sides = eqStr.split(/→|->/).map(s => s.trim());
+      if (sides.length !== 2) throw new Error("Invalid equation format");
+      
+      const reactants = sides[0].split('+').map(s => s.trim()).filter(s => s);
+      const products = sides[1].split('+').map(s => s.trim()).filter(s => s);
+      
+      return { reactants, products, all: [...reactants, ...products] };
+    }
+
+    static getAtomsInCompounds(compounds) {
+      const atoms = new Set();
+      compounds.forEach(compound => {
+        const parsed = FormulaParser.parse(compound);
+        Object.keys(parsed).forEach(atom => atoms.add(atom));
+      });
+      return Array.from(atoms);
+    }
+
+    static buildMatrix(reactants, products) {
+      const all = [...reactants, ...products];
+      const atoms = this.getAtomsInCompounds(all);
+      
+      const matrix = [];
+      atoms.forEach(atom => {
+        const row = [];
+        reactants.forEach(compound => {
+          const parsed = FormulaParser.parse(compound);
+          row.push(parsed[atom] || 0);
+        });
+        products.forEach(compound => {
+          const parsed = FormulaParser.parse(compound);
+          row.push(-(parsed[atom] || 0));
+        });
+        matrix.push(row);
+      });
+      return { matrix, atoms, numCompounds: all.length };
+    }
+
+    static solve(eqStr) {
+      try {
+        const { reactants, products, all } = this.parseEquation(eqStr);
+        const { matrix, atoms } = this.buildMatrix(reactants, products);
+
+        let coefficients = null;
+        for (let scale = 1; scale <= 100; scale++) {
+          const testCoeffs = this.tryCoefficients(matrix, all.length, scale);
+          if (testCoeffs) {
+            coefficients = testCoeffs;
+            break;
+          }
+        }
+
+        if (!coefficients) throw new Error("Could not balance equation");
+
+        const gcd = this.gcd(...coefficients);
+        coefficients = coefficients.map(c => c / gcd);
+
+        const reactantCoeffs = coefficients.slice(0, reactants.length);
+        const productCoeffs = coefficients.slice(reactants.length);
+
+        return {
+          reactants: reactants.map((r, i) => ({
+            formula: r,
+            coefficient: reactantCoeffs[i],
+            molarMass: FormulaParser.getMolarMass(r)
+          })),
+          products: products.map((p, i) => ({
+            formula: p,
+            coefficient: productCoeffs[i],
+            molarMass: FormulaParser.getMolarMass(p)
+          })),
+          balanced: true
+        };
+      } catch (error) {
+        return { balanced: false, error: error.message };
+      }
+    }
+
+    static tryCoefficients(matrix, numCompounds, maxCoeff) {
+      for (let c1 = 1; c1 <= maxCoeff; c1++) {
+        for (let c2 = 1; c2 <= maxCoeff; c2++) {
+          for (let c3 = 1; c3 <= maxCoeff; c3++) {
+            for (let c4 = 1; c4 <= maxCoeff; c4++) {
+              const coeffs = [c1, c2, c3, c4].slice(0, numCompounds);
+              if (this.isValid(matrix, coeffs)) {
+                return coeffs;
+              }
             }
           }
         }
-        if(found && coeffs.every(x=>Number.isInteger(x)&&x>=0)){result=coeffs;break;}
       }
-      if(!result) return "Could not balance. Try a simpler equation.";
-      // GCD reduce
-      let gcd = result.reduce((a,b)=>b===0?a:a&&b?gcd2(a,b):a,result[0]);
-      function gcd2(a,b){return b?gcd2(b,a%b):a;}
-      result=result.map(x=>x/gcd);
-      function fmt(c, s){return (c===1?"":c+" ")+s;}
-      let leftS=left.map((s,i)=>fmt(result[i],s)), rightS=right.map((s,i)=>fmt(result[i+left.length],s));
-      return `<span style="font-size:1.15em;">${leftS.join(" + ")} = ${rightS.join(" + ")}</span>`;
-    } catch(e) {
-      return "Error: "+e;
+      return null;
     }
-  }
-  document.getElementById('chem-eq-form').oninput = function() {
-    let val = document.getElementById('eq-input').value.trim();
-    document.getElementById('eq-result').innerHTML = balanceEquation(val);
-  };
-  // Initial run
-  document.getElementById('eq-input').addEventListener('input', function(){
-    document.getElementById('eq-result').innerHTML = balanceEquation(this.value);
-  });
 
-  // =========== Chemistry: Mole & Quantity Solver ===========
-  document.getElementById('mole-form').onsubmit = function(e){
-    e.preventDefault();
-    let kname = document.getElementById('known-name').value.trim()||"Known";
-    let tname = document.getElementById('target-name').value.trim()||"Target";
-    let kcoeff = parseFloat(document.getElementById('known-coeff').value);
-    let tcoeff = parseFloat(document.getElementById('target-coeff').value);
-    let kmass = parseFloat(document.getElementById('known-mass').value);
-    let tmass = parseFloat(document.getElementById('target-mass').value);
-    let typeofKnown = document.getElementById('known-metric').value;
-    let typeofTarget = document.getElementById('target-unit').value;
-    let knownQty = parseFloat(document.getElementById('known-qty').value);
-
-    if([kcoeff,tcoeff,kmass,tmass,knownQty].some(x=>!x||x<=0)) {
-      document.getElementById('mole-result').innerText="Fill all positive values!";
-      return;
-    }
-    // 1. Convert known quantity to moles
-    let knownMoles;
-    switch(typeofKnown){
-      case "g": knownMoles = knownQty/kmass; break;
-      case "mol": knownMoles = knownQty; break;
-      case "v_stp": knownMoles = knownQty/22.4; break;
-      case "v_rtp": knownMoles = knownQty/24; break;
-    }
-    // 2. Apply mole ratio
-    let moleRatio = tcoeff/kcoeff;
-    let targetMoles = knownMoles * moleRatio;
-    // 3. Output conversion
-    let outputVal;
-    if(typeofTarget==="g") outputVal = targetMoles*tmass;
-    else if(typeofTarget==="mol") outputVal = targetMoles;
-    else if(typeofTarget==="v_stp") outputVal = targetMoles*22.4;
-    else outputVal = targetMoles*24;
-    let outUnit = {"g":"grams (g)","mol":"moles (mol)","v_stp":"volume at STP (dm³)","v_rtp":"volume at RTP (dm³)"}[typeofTarget];
-    let humanUnits = {"g":"g","mol":"mol","v_stp":"dm³ @STP", "v_rtp":"dm³ @RTP"};
-    let steps = 
-`<b>Step 1: </b> Convert ${knownQty} ${humanUnits[typeofKnown]} of ${kname} to moles.
-`+(typeofKnown==="g"?`moles = mass/molar mass = ${knownQty}/${kmass} = <b>${knownMoles.toFixed(5)}</b> mol`
-  : (typeofKnown==="mol"?`Given directly: <b>${knownMoles.toFixed(5)}</b> mol`
-  : typeofKnown==="v_stp"?`moles = vol/22.4 = ${knownQty}/22.4 = <b>${knownMoles.toFixed(5)}</b> mol`
-  : `moles = vol/24 = ${knownQty}/24 = <b>${knownMoles.toFixed(5)}</b> mol` ))
-+`
-<b>Step 2: </b> Equation Ratio: ${kcoeff}:${tcoeff} ⇒ ${tname} moles = ${knownMoles.toFixed(5)} × ${moleRatio} = <b>${targetMoles.toFixed(5)}</b> mol
-<b>Step 3: </b> Target Output:
-` +(typeofTarget==="g"?`mass = moles × Mᵣ = ${targetMoles.toFixed(5)} × ${tmass} = <b>${outputVal.toFixed(5)} g</b>`
-: (typeofTarget==="mol"?`<b>${outputVal.toFixed(5)} moles</b>`
-: typeofTarget==="v_stp"?`volume = moles × 22.4 = ${targetMoles.toFixed(5)} × 22.4 = <b>${outputVal.toFixed(5)} dm³ (STP)</b>`
-: `volume = moles × 24 = ${targetMoles.toFixed(5)} × 24 = <b>${outputVal.toFixed(5)} dm³ (RTP)</b>`));
-    document.getElementById('mole-result').innerHTML = steps;
-  };
-
-  // =========== Chemistry: Limiting Reactant ===========
-  document.getElementById('limit-form').onsubmit = function(e){
-    e.preventDefault();
-    let names = [
-      document.getElementById('lim-a-name').value.trim()||"A",
-      document.getElementById('lim-b-name').value.trim()||"B"
-    ];
-    let amol = parseFloat(document.getElementById('lim-a-mol').value);
-    let acol = parseFloat(document.getElementById('lim-a-coeff').value);
-    let amass = parseFloat(document.getElementById('lim-a-mass').value);
-    let bmol = parseFloat(document.getElementById('lim-b-mol').value);
-    let bcol = parseFloat(document.getElementById('lim-b-coeff').value);
-    let bmass = parseFloat(document.getElementById('lim-b-mass').value);
-    if([amol, bmol, acol, bcol, amass, bmass].some(x=>!x||x<=0)){
-      document.getElementById('limiting-result').innerText="Fill all values (>0)!";
-      return;
-    }
-    // Required ratio
-    let reqB=(bcol/acol)*amol;
-    let reqA=(acol/bcol)*bmol;
-    let limiting, excess, remain;
-    if(bmol<reqB){
-      limiting=names[1];excess=names[0];
-      let usedA = (bmol * acol)/bcol;
-      remain = amass - usedA*amass/amol;
-    } else {
-      limiting=names[0];excess=names[1];
-      let usedB = (amol * bcol)/acol;
-      remain = bmass - usedB*bmass/bmol;
-    }
-    let s = `<b>Step 1: </b> Available: ${names[0]}: ${amol} mol ("${amass}g" Mᵣ:${amass/amol}), ${names[1]}: ${bmol} mol ("${bmass}g" Mᵣ:${bmass/bmol})
-<b>Step 2: </b> Required:
-${names[1]} needed for all ${names[0]}: (${bcol}/${acol}) × ${amol} = <b>${reqB}</b> mol<br>
-${names[0]} needed for all ${names[1]}: (${acol}/${bcol}) × ${bmol} = <b>${reqA}</b> mol
-<b>Result: </b> Limiting reactant: <b>${limiting}</b> <br>Excess left: <b>${remain.toFixed(5)} g of ${excess}</b>`;
-    document.getElementById('limiting-result').innerHTML = s;
-  };
-
-  // ============= Physics: Kinematics =================
-  document.getElementById('kinematics-form').onsubmit = function(e){
-    e.preventDefault();
-    let u=+document.getElementById('kin-u').value,
-        v=+document.getElementById('kin-v').value,
-        a=+document.getElementById('kin-a').value,
-        t=+document.getElementById('kin-t').value,
-        s=+document.getElementById('kin-s').value;
-    function isValid(x){return !isNaN(x);}
-    let vars={u, v, a, t, s};
-    let filled = Object.entries(vars).filter(([,v]) => isValid(v));
-    if(filled.length < 3){
-      document.getElementById('kinematics-result').innerText = "Fill any 3 fields. Leave unknowns blank.";
-      return;
-    }
-    let result = "";
-    // Solve order: u, v, a, t, s
-    if (!isValid(u)) {
-      if(isValid(v)&&isValid(a)&&isValid(t)) result=`u = v - a·t = ${v} - ${a}×${t} = <b>${v-a*t} m/s</b>`;
-      else if(isValid(v)&&isValid(a)&&isValid(s)) result=`u = sqrt(v²-2as) = sqrt(${v}²-2×${a}×${s}) = <b>${Math.sqrt(v**2-2*a*s)} m/s</b>`;
-      else result="More data needed.";
-    }
-    else if (!isValid(v)) {
-      if(isValid(u)&&isValid(a)&&isValid(t)) result=`v = u + a·t = ${u} + ${a}×${t} = <b>${u+a*t} m/s</b>`;
-      else if(isValid(u)&&isValid(a)&&isValid(s)) result=`v = sqrt(u²+2as) = sqrt(${u}²+2×${a}×${s}) = <b>${Math.sqrt(u**2+2*a*s)} m/s</b>`;
-      else result="More data needed.";
-    }
-    else if (!isValid(a)) {
-      if(isValid(v)&&isValid(u)&&isValid(t)) result=`a = (v-u)/t = (${v} - ${u})/${t} = <b>${(v-u)/t} m/s²</b>`;
-      else if(isValid(v)&&isValid(u)&&isValid(s)) result=`a = (v²-u²)/(2s) = (${v}²-${u}²)/(2×${s}) = <b>${(v**2-u**2)/(2*s)} m/s²</b>`;
-      else result="More data needed.";
-    }
-    else if (!isValid(t)) {
-      if(isValid(v)&&isValid(u)&&isValid(a)) result=`t = (v-u)/a = (${v} - ${u})/${a} = <b>${(v-u)/a} s</b>`;
-      else if(isValid(s)&&isValid(u)&&isValid(a)){
-        let disc = u**2+2*a*s;
-        if(a!==0&&disc>=0) result=`t = (-u + sqrt(u²+2as))/a = (-${u} + sqrt(${disc}))/${a} = <b>${(-u+Math.sqrt(disc))/a} s</b>`;
-        else result="No valid real solution.";
+    static isValid(matrix, coeffs) {
+      for (let row of matrix) {
+        let sum = 0;
+        for (let i = 0; i < row.length; i++) {
+          sum += row[i] * (coeffs[i] || 0);
+        }
+        if (sum !== 0) return false;
       }
-      else result="More data needed.";
+      return true;
     }
-    else if (!isValid(s)) {
-      if(isValid(u)&&isValid(t)&&isValid(a)) result=`s = ut + ½at² = ${u}×${t} + 0.5×${a}×${t}² = <b>${u*t+0.5*a*t**2} m</b>`;
-      else if(isValid(v)&&isValid(t)&&isValid(a)) result=`s = vt - ½at² = ${v}×${t} - 0.5×${a}×${t}² = <b>${v*t-0.5*a*t**2} m</b>`;
-      else result="More data needed.";
-    }
-    else result="All solved.";
-    document.getElementById('kinematics-result').innerHTML = result;
-  };
 
-  // ============= Physics: Wave Eqn =============
-  document.getElementById('waves-form').onsubmit = function(e){
-    e.preventDefault();
-    let v=+document.getElementById('wv-v').value,
-        f=+document.getElementById('wv-f').value,
-        l=+document.getElementById('wv-l').value;
-    let known = [!isNaN(v),!isNaN(f),!isNaN(l)].map((b,i)=>b?i:-1).filter(x=>x!=-1).length;
-    let out="";
-    if(known<2) out="Enter any two fields, leave one blank.";
-    else if(isNaN(v)) out=`v = f × λ = ${f}×${l} = <b>${f*l} m/s</b>`;
-    else if(isNaN(f)) out=`f = v / λ = ${v}/${l} = <b>${v/l} Hz</b>`;
-    else if(isNaN(l)) out=`λ = v / f = ${v}/${f} = <b>${v/f} m</b>`;
-    else out="All present.";
-    document.getElementById('waves-result').innerHTML = out;
-  };
-
-  // ============= Math: Quadratic ================
-  document.getElementById('quad-form').onsubmit = function(e){
-    e.preventDefault();
-    let a=+document.getElementById('quad-a').value,
-        b=+document.getElementById('quad-b').value,
-        c=+document.getElementById('quad-c').value;
-    if(isNaN(a)||isNaN(b)||isNaN(c)||a===0){
-      document.getElementById('quad-result').innerText="a≠0, all required.";
-      return;
-    }
-    let D=b*b-4*a*c,verb=`<b>Discriminant D=b²-4ac=${b**2}-4×${a}×${c}=${D}<b>`;
-    if(D<0){
-      let rp=-b/(2*a),ip=Math.sqrt(-D)/(2*a);
-      verb+=`<br><b>Complex:</b> x = ${rp.toFixed(3)} ± ${ip.toFixed(3)}i`;
-    } else {
-      let x1=(-b+Math.sqrt(D))/(2*a),x2=(-b-Math.sqrt(D))/(2*a);
-      verb+=`<br>x₁=(-b+√D)/2a= ${(-b)}+√${D}/2×${a} = <b>${x1}</b>`;
-      verb+=`<br>x₂=(-b-√D)/2a= ${(-b)}-√${D}/2×${a} = <b>${x2}</b>`;
-    }
-    document.getElementById('quad-result').innerHTML=verb;
-  };
-
-  // ============ Math: Matrix 2x2 Solver ===========
-  document.getElementById('matrix-form').onsubmit = function(e){
-    e.preventDefault();
-    let m11=+document.getElementById('m11').value,
-        m12=+document.getElementById('m12').value,
-        m21=+document.getElementById('m21').value,
-        m22=+document.getElementById('m22').value;
-    if([m11,m12,m21,m22].some(isNaN)){
-      document.getElementById('matrix-result').innerText="Fill all cells.";
-      return;
-    }
-    let D=m11*m22-m12*m21, T=[[m11, m21],[m12, m22]], inv=null;
-    if(D!==0) inv=[[m22/D, -m12/D],[-m21/D, m11/D]];
-    let html=`<b>Determinant:</b> ${D}<br><b>Transpose:</b><br><table style="margin:3px 0;"><tr><td>${T[0][0]}</td><td>${T[0][1]}</td></tr><tr><td>${T[1][0]}</td><td>${T[1][1]}</td></tr></table>`;
-    if(inv) html+=`<b>Inverse:</b><br><table style="margin:3px 0;"><tr><td>${inv[0][0].toFixed(5)}</td><td>${inv[0][1].toFixed(5)}</td></tr><tr><td>${inv[1][0].toFixed(5)}</td><td>${inv[1][1].toFixed(5)}</td></tr></table>`;
-    else html+="<b>No inverse (singular)</b>";
-    document.getElementById('matrix-result').innerHTML=html;
-  };
-
-  // ============= Math: Simultaneous ===============
-  document.querySelectorAll('input[name="simul-vars"]').forEach(radio=>{
-    radio.onchange=()=> {
-      let v=parseInt(document.querySelector('input[name="simul-vars"]:checked').value);
-      document.getElementById('simul-2vars').style.display = v==2?"block":"none";
-      document.getElementById('simul-3vars').style.display = v==3?"block":"none";
-    }
-  });
-  document.getElementById('simul-form').onsubmit = function(e){
-    e.preventDefault();
-    let v=parseInt(document.querySelector('input[name="simul-vars"]:checked').value), out="";
-    if(v===2){
-      let ids = ['s2a1','s2b1','s2c1','s2a2','s2b2','s2c2'];
-      let [a1,b1,c1,a2,b2,c2]=ids.map(id=>+document.getElementById(id).value);
-      if([a1,b1,c1,a2,b2,c2].some(isNaN)){
-        document.getElementById('simul-result').innerText="Fill all.";
-        return;
-      }
-      let D=a1*b2-a2*b1, Dx=c1*b2-c2*b1, Dy=a1*c2-a2*c1;
-      if(D==0) out="No unique solution.";
-      else out=`<b>D:</b> ${D}<br>x=Dx/D=${Dx}/${D}=${(Dx/D).toFixed(5)}<br>y=Dy/D=${Dy}/${D}=${(Dy/D).toFixed(5)}`;
-    }
-    else{
-      let get=id=>+document.getElementById(id).value;
-      let a1=get('s3a1'),b1=get('s3b1'),c1=get('s3c1'),d1=get('s3d1'),
-          a2=get('s3a2'),b2=get('s3b2'),c2=get('s3c2'),d2=get('s3d2'),
-          a3=get('s3a3'),b3=get('s3b3'),c3=get('s3c3'),d3=get('s3d3');
-      if([a1,b1,c1,d1,a2,b2,c2,d2,a3,b3,c3,d3].some(isNaN)){
-        document.getElementById('simul-result').innerText="Fill all.";
-        return;
-      }
-      let D =
-        a1*(b2*c3-b3*c2) - b1*(a2*c3-a3*c2) + c1*(a2*b3-a3*b2);
-      let Dx =
-        d1*(b2*c3-b3*c2) - b1*(d2*c3-d3*c2) + c1*(d2*b3-d3*b2);
-      let Dy =
-        a1*(d2*c3-d3*c2) - d1*(a2*c3-a3*c2) + c1*(a2*d3-a3*d2);
-      let Dz =
-        a1*(b2*d3-b3*d2) - b1*(a2*d3-a3*d2) + d1*(a2*b3-a3*b2);
-      if(D==0) out="No unique solution.";
-      else out=`<b>D:</b> ${D}<br>x=Dx/D=${Dx}/${D}=${(Dx/D).toFixed(5)}<br>y=Dy/D=${Dy}/${D}=${(Dy/D).toFixed(5)}<br>z=Dz/D=${Dz}/${D}=${(Dz/D).toFixed(5)}`;
-    }
-    document.getElementById('simul-result').innerHTML=out;
-  };
-</script>
-<script>
-  // ========== PWA Service Worker (Basic version) ==========
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').then(function(reg) {
-        // Service Worker registered
-      }, function(err) {
-        // Registration failed
+    static gcd(...numbers) {
+      return numbers.reduce((a, b) => {
+        while (b !== 0) {
+          [a, b] = [b, a % b];
+        }
+        return a;
       });
-    });
-  }
-</script>
-<!-- Service Worker code (sw.js) to be auto-generated at first load, or manually create with below as a template:
+    }
 
-const CACHE_NAME = 'nkana-hub-toolbox-v1';
-const urlsToCache = [
-  '/',
-  '/index.html'
-];
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {return cache.addAll(urlsToCache);})
-  );
-});
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {return response || fetch(event.request);})
-  );
-});
--->
+    static formatEquation(balancedData) {
+      if (!balancedData.balanced) return null;
+      
+      const reactants = balancedData.reactants
+        .map(r => `${r.coefficient > 1 ? r.coefficient : ''}${r.formula}`)
+        .join(' + ');
+      
+      const products = balancedData.products
+        .map(p => `${p.coefficient > 1 ? p.coefficient : ''}${p.formula}`)
+        .join(' + ');
+      
+      return `${reactants} → ${products}`;
+    }
+  }
+
+  // ============ STOICHIOMETRY CALCULATOR ============
+  class StoichiometryCalculator {
+    static calculate(balancedData, startingCompound, startingMoles) {
+      if (!balancedData.balanced) {
+        throw new Error("Equation must be balanced first");
+      }
+
+      const allSubstances = [...balancedData.reactants, ...balancedData.products];
+      const startingSubstance = allSubstances.find(s => s.formula === startingCompound);
+      
+      if (!startingSubstance) {
+        throw new Error("Starting compound not found in equation");
+      }
+
+      const isReactant = balancedData.reactants.includes(startingSubstance);
+      const results = {
+        startingCompound,
+        startingMoles,
+        startingMass: startingMoles * startingSubstance.molarMass,
+        substances: []
+      };
+
+      allSubstances.forEach(substance => {
+        const moleRatio = substance.coefficient / startingSubstance.coefficient;
+        const molesProduced = startingMoles * moleRatio;
+        const massProduced = molesProduced * substance.molarMass;
+
+        results.substances.push({
+          formula: substance.formula,
+          coefficient: substance.coefficient,
+          molarMass: substance.molarMass,
+          moles: molesProduced,
+          mass: massProduced,
+          isReactant: balancedData.reactants.includes(substance),
+          isProduct: balancedData.products.includes(substance)
+        });
+      });
+
+      return results;
+    }
+
+    static findLimitingReactant(balancedData, reactantMasses) {
+      if (!balancedData.balanced) {
+        throw new Error("Equation must be balanced first");
+      }
+
+      const moleData = {};
+      let minRatio = Infinity;
+      let limitingReactant = null;
+
+      balancedData.reactants.forEach(reactant => {
+        if (reactantMasses[reactant.formula] !== undefined) {
+          const moles = reactantMasses[reactant.formula] / reactant.molarMass;
+          const ratio = moles / reactant.coefficient;
+          moleData[reactant.formula] = { moles, ratio };
+
+          if (ratio < minRatio) {
+            minRatio = ratio;
+            limitingReactant = reactant.formula;
+          }
+        }
+      });
+
+      return { limitingReactant, moleData, minRatio };
+    }
+  }
+
+  // ============ UI CONTROLLER ============
+  class UIController {
+    constructor() {
+      this.currentBalance = null;
+      this.init();
+    }
+
+    init() {
+      this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+      document.getElementById('unbalanced-equation').addEventListener('input', (e) => {
+        this.balanceEquation(e.target.value);
+      });
+
+      document.getElementById('calculate-stoichiometry').addEventListener('click', () => {
+        this.calculateStoichiometry();
+      });
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          this.switchModule(e.currentTarget.dataset.module);
+        });
+      });
+    }
+
+    balanceEquation(eqStr) {
+      const resultDiv = document.getElementById('equation-result');
+      const errorDiv = document.getElementById('equation-error');
+
+      if (!eqStr.trim()) {
+        resultDiv.style.display = 'none';
+        errorDiv.style.display = 'none';
+        return;
+      }
+
+      const result = EquationBalancer.solve(eqStr);
+
+      if (result.balanced) {
+        this.currentBalance = result;
+        const formatted = EquationBalancer.formatEquation(result);
+        resultDiv.textContent = formatted;
+        resultDiv.classList.remove('invalid');
+        resultDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        
+        document.getElementById('balanced-equation-display').value = formatted;
+        this.renderStoichiometryInputs(result);
+      } else {
+        resultDiv.style.display = 'none';
+        errorDiv.textContent = `Error: ${result.error}`;
+        errorDiv.style.display = 'block';
+        this.currentBalance = null;
+        this.clearStoichiometryInputs();
+      }
+    }
+
+    renderStoichiometryInputs(balancedData) {
+      const reactantsSection = document.getElementById('reactants-section');
+      const productsSection = document.getElementById('products-section');
+
+      reactantsSection.innerHTML = '<h3 style="color: var(--text-primary); margin: 20px 0 16px 0; font-size: 16px;">Reactants (Enter mass for at least one)</h3>';
+      productsSection.innerHTML = '<h3 style="color: var(--text-primary); margin: 20px 0 16px 0; font-size: 16px;">Products (Calculated)</h3>';
+
+      balancedData.reactants.forEach((reactant, idx) => {
+        const html = `
+          <div class="substance-row">
+            <div class="substance-row-title">${reactant.coefficient > 1 ? reactant.coefficient : ''}${reactant.formula}</div>
+            <div class="form-group">
+              <label class="form-label">Mass (g)</label>
+              <input type="number" class="form-input reactant-input" data-formula="${reactant.formula}" step="0.001" min="0" placeholder="0.0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Molar Mass</label>
+              <input type="text" class="form-input" value="${reactant.molarMass.toFixed(3)} g/mol" disabled style="background: var(--bg-tertiary); cursor: not-allowed;">
+            </div>
+          </div>
+        `;
+        reactantsSection.innerHTML += html;
+      });
+
+      balancedData.products.forEach((product, idx) => {
+        const html = `
+          <div class="substance-row">
+            <div class="substance-row-title">${product.coefficient > 1 ? product.coefficient : ''}${product.formula}</div>
+            <div class="form-group">
+              <label class="form-label">Theoretical Mass (g)</label>
+              <input type="text" class="form-input product-output" data-formula="${product.formula}" disabled style="background: var(--bg-tertiary); cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Molar Mass</label>
+              <input type="text" class="form-input" value="${product.molarMass.toFixed(3)} g/mol" disabled style="background: var(--bg-tertiary); cursor: not-allowed;">
+            </div>
+          </div>
+        `;
+        productsSection.innerHTML += html;
+      });
+    }
+
+    clearStoichiometryInputs() {
+      document.getElementById('reactants-section').innerHTML = '';
+      document.getElementById('products-section').innerHTML = '';
+      document.getElementById('stoichiometry-results').style.display = 'none';
+    }
+
+    calculateStoichiometry() {
+      if (!this.currentBalance) {
+        alert('Please balance an equation first');
+        return;
+      }
+
+      const reactantInputs = document.querySelectorAll('.reactant-input');
+      const startingMasses = {};
+      let filledInputs = 0;
+
+      reactantInputs.forEach(input => {
+        const value = parseFloat(input.value);
+        if (value > 0) {
+          startingMasses[input.dataset.formula] = value;
+          filledInputs++;
+        }
+      });
+
+      if (filledInputs === 0) {
+        alert('Please enter the mass for at least one reactant');
+        return;
+      }
+
+      try {
+        const limitingData = StoichiometryCalculator.findLimitingReactant(this.currentBalance, startingMasses);
+        
+        const calculations = {};
+        const baseCalc = StoichiometryCalculator.calculate(
+          this.currentBalance,
+          limitingData.limitingReactant,
+          startingMasses[limitingData.limitingReactant] / 
+            this.currentBalance.reactants.find(r => r.formula === limitingData.limitingReactant).molarMass
+        );
+
+        baseCalc.substances.forEach(sub => {
+          calculations[sub.formula] = sub;
+        });
+
+        this.displayResults(calculations, limitingData.limitingReactant, startingMasses);
+      } catch (error) {
+        alert(`Calculation error: ${error.message}`);
+      }
+    }
+
+    displayResults(calculations, limitingReactant, startingMasses) {
+      const resultsDiv = document.getElementById('stoichiometry-results');
+      let html = '<h3 style="color: var(--text-primary); margin-bottom: 16px; font-size: 16px;">Calculation Results</h3>';
+
+      html += `
+        <div class="result-group warning">
+          <div class="result-label">Limiting Reactant</div>
+          <div class="result-value">${limitingReactant}</div>
+        </div>
+      `;
+
+      // Display reactants
+      html += '<h4 style="color: var(--text-secondary); margin: 20px 0 12px 0; font-size: 14px;">Reactants</h4>';
+      this.currentBalance.reactants.forEach(reactant => {
+        const calc = calculations[reactant.formula];
+        const inputMass = startingMasses[reactant.formula];
+        const moles = (inputMass || calc.moles * reactant.molarMass) / reactant.molarMass;
+        
+        html += `
+          <div class="result-group">
+            <div class="result-label">${reactant.formula} - Moles</div>
+            <div class="result-value">${moles.toFixed(4)} <span class="result-unit">mol</span></div>
+          </div>
+        `;
+      });
+
+      // Display products
+      html += '<h4 style="color: var(--text-secondary); margin: 20px 0 12px 0; font-size: 14px;">Products (Theoretical Yield)</h4>';
+      this.currentBalance.products.forEach(product => {
+        const calc = calculations[product.formula];
+        
+        html += `
+          <div class="result-group success">
+            <div class="result-label">${product.formula}</div>
+            <div class="result-value">${calc.mass.toFixed(4)} <span class="result-unit">g</span></div>
+            <div style="color: var(--text-secondary); font-size: 12px; margin-top: 8px;">
+              ${calc.moles.toFixed(4)} mol | M = ${calc.molarMass.toFixed(3)} g/mol
+            </div>
+          </div>
+        `;
+      });
+
+      resultsDiv.innerHTML = html;
+      resultsDiv.style.display = 'block';
+
+      // Update product outputs
+      document.querySelectorAll('.product-output').forEach(output => {
+        const formula = output.dataset.formula;
+        const calc = calculations[formula];
+        if (calc) {
+          output.value = `${calc.mass.toFixed(4)} g`;
+        }
+      });
+    }
+
+    switchModule(moduleName) {
+      document.querySelectorAll('.module-content').forEach(m => {
+        m.classList.remove('active');
+      });
+      document.getElementById(`${moduleName}-module`).classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.module === moduleName);
+      });
+    }
+  }
+
+  // ============ INITIALIZATION ============
+  document.addEventListener('DOMContentLoaded', () => {
+    new UIController();
+  });
+</script>
 </body>
 </html>
